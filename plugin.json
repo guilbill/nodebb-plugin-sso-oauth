@@ -1,5 +1,5 @@
 {
-    "id": "nodebb-plugin-auth",
+    "id": "nodebb-plugin-1859-auth",
     "name": "NodeBB Auth",
     "description": "NodeBB Plugin that allows users to login",
     "url": "https://github.com/guilbill/nodebb-plugin-sso-oauth",
