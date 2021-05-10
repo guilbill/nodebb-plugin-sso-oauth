@@ -1,58 +1,21 @@
 {
-  "name": "nodebb-plugin-sso-oauth",
-  "version": "0.5.0",
-  "description": "NodeBB Generic OAuth SSO",
-  "main": "library.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/julianlam/nodebb-plugin-sso-oauth"
-  },
-  "keywords": [
-    "nodebb",
-    "plugin",
-    "oauth",
-    "oauth2",
-    "sso",
-    "single sign on",
-    "login",
-    "registration"
-  ],
-  "author": {
-    "name": "Julian Lam",
-    "email": "julian@nodebb.org"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/julianlam/nodebb-plugin-sso-oauth/issues"
-  },
-  "readme": "",
-  "readmeFilename": "README.md",
-  "dependencies": {
-    "async": "^3.2.0",
-    "eslint": "^7.7.0",
-    "passport-oauth": "~1.0.0"
-  },
-  "nbbpm": {
-    "compatibility": "^1.0.1",
-    "index": false
-  },
-  "devDependencies": {
-    "@commitlint/config-angular": "^8.3.4",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "husky": "^4.2.3",
-    "lint-staged": "^10.0.8"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    "name": "nodebb-plugin-1859-auth",
+    "version": "0.1.0",
+    "description": "NodeBB Authentication for 1859",
+    "main": "library.js",
+    "license": "MIT",
+    "readme": "",
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "async": "^3.2.0",
+        "eslint": "^7.7.0"
+    },
+    "nbbpm": {
+        "compatibility": "^1.16.1",
+        "index": false
+    },
+    "devDependencies": {
+        "eslint-plugin-import": "^2.20.1",
+        "lint-staged": "^10.0.8"
     }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
-  }
 }
