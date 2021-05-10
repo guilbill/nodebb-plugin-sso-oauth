@@ -3,7 +3,7 @@
 const passport = module.parent.require('passport');
 const passportLocal = module.parent.require('passport-local').Strategy;
 const winston = module.parent.require('winston');
-const userService = module.parent.require('./user');
+const User = require.main.require('./src/user');
 const plugin = {};
 
 plugin.login = () => {
@@ -25,9 +25,9 @@ plugin.continueLogin = (req, username, password, next) => {
     })
         .then(async (user) => {
             console.log(`Got user ${username}`);
-            let nodeBBUser = await userService.exists(user.login);
+            let nodeBBUser = await User.exists(user.login);
             if (!nodeBBUser) {
-                nodeBBUser = await userService.create({
+                nodeBBUser = await User.create({
                     username: login,
                 });
             }
