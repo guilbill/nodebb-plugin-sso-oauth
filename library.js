@@ -15,6 +15,7 @@ plugin.login = () => {
 };
 
 plugin.continueLogin = (req, username, password, next) => {
+    console.log(`fetching loging for user ${username}`);
     fetch('http://localhost:3000/admin/login', {
         headers: {
             accept: '*/*',
@@ -24,12 +25,14 @@ plugin.continueLogin = (req, username, password, next) => {
         method: 'POST',
     })
         .then(async (user) => {
+            console.log(`Got user ${username}`);
             let nodeBBUser = await user.exists(slugify(user.login));
             if (!nodeBBUser) {
                 nodeBBUser = await create({
                     username: login,
                 });
             }
+            console.log(`NodeBB User ${nodeBBUser}`);
             next(
                 null,
                 {
