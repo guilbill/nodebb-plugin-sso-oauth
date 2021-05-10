@@ -3,6 +3,7 @@
 const passport = module.parent.require('passport');
 const passportLocal = module.parent.require('passport-local').Strategy;
 const winston = module.parent.require('winston');
+const fetch = module.parent.require('node-fetch');
 const User = require.main.require('./src/user');
 const plugin = {};
 
