@@ -1,12 +1,8 @@
 {
-	"id": "nodebb-plugin-sso-oauth",
-	"name": "NodeBB OAuth SSO",
-	"description": "NodeBB Plugin that allows users to login/register via any configured OAuth provider.",
-	"url": "https://github.com/julianlam/nodebb-plugin-sso-oauth",
-	"library": "./library.js",
-	"hooks": [
-		{ "hook": "static:user.delete", "method": "deleteUserData" },
-		{ "hook": "filter:user.whitelistFields", "method": "whitelistFields" },
-		{ "hook": "filter:auth.init", "method": "getStrategy" }
-	]
+    "id": "nodebb-plugin-auth",
+    "name": "NodeBB Auth",
+    "description": "NodeBB Plugin that allows users to login",
+    "url": "https://github.com/guilbill/nodebb-plugin-sso-oauth",
+    "library": "./library.js",
+    "hooks": [{ "hook": "action:auth.overrideLogin", "method": "login" }]
 }
