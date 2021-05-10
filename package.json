@@ -1,5 +1,5 @@
 {
-    "name": "nodebb-plugin-1859-auth",
+    "name": "nodebb-plugin-api-auth",
     "version": "0.1.0",
     "description": "NodeBB Authentication for 1859",
     "main": "library.js",
