@@ -4,7 +4,7 @@ const passport = module.parent.require('passport');
 const passportLocal = module.parent.require('passport-local').Strategy;
 const winston = module.parent.require('winston');
 const slugify = module.parent.require('slugify');
-const user = module.parent.require('./user');
+const userService = module.parent.require('./user');
 const plugin = {};
 
 plugin.login = () => {
@@ -26,9 +26,9 @@ plugin.continueLogin = (req, username, password, next) => {
     })
         .then(async (user) => {
             console.log(`Got user ${username}`);
-            let nodeBBUser = await user.exists(slugify(user.login));
+            let nodeBBUser = await userService.exists(slugify(user.login));
             if (!nodeBBUser) {
-                nodeBBUser = await create({
+                nodeBBUser = await userService.create({
                     username: login,
                 });
             }
@@ -41,7 +41,8 @@ plugin.continueLogin = (req, username, password, next) => {
                 '[[success:authentication-successful]]'
             );
         })
-        .catch(() => {
+        .catch((error) => {
+            console.error(error);
             next(new Error('[[error:invalid-username-or-password]]'));
         });
 
