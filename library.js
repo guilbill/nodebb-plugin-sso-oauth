@@ -4,6 +4,7 @@ const passport = module.parent.require('passport');
 const passportLocal = module.parent.require('passport-local').Strategy;
 const winston = module.parent.require('winston');
 const fetch = module.parent.require('node-fetch');
+const slugify = module.parent.require('slugify');
 const User = require.main.require('./src/user');
 const plugin = {};
 
@@ -16,7 +17,7 @@ plugin.login = () => {
 
 plugin.continueLogin = (req, username, password, next) => {
     console.log(`fetching loging for user ${username}`);
-    fetch('http://localhost:3000/admin/login', {
+    fetch('http://localhost:3000/authenticate', {
         headers: {
             accept: '*/*',
             'content-type': 'application/json',
@@ -36,10 +37,12 @@ plugin.continueLogin = (req, username, password, next) => {
             return res.json();
         })
         .then(async (user) => {
-            let nodeBBUser = await User.getUidByUserslug(user.login);
+            let nodeBBUser = await User.getUidByUserslug(
+                slugify(user.username)
+            );
             if (!nodeBBUser) {
                 nodeBBUser = await User.create({
-                    username: user.login,
+                    username: user.username,
                 });
             }
             next(
