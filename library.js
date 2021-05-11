@@ -24,8 +24,12 @@ plugin.continueLogin = (req, username, password, next) => {
         body: `{"login":"${username}","password":"${password}"}`,
         method: 'POST',
     })
+        .then((user) => {
+            console.dir(user);
+            user.json();
+        })
         .then(async (user) => {
-            console.log(`Got user ${user.login}`);
+            console.log(`Got user ${user}`);
             let nodeBBUser = await User.exists(user.login);
             if (!nodeBBUser) {
                 nodeBBUser = await User.create({
