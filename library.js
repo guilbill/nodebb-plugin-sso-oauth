@@ -28,18 +28,16 @@ plugin.continueLogin = (req, username, password, next) => {
             return res.json();
         })
         .then(async (user) => {
-            console.log(`Got user ${user}`);
-            let nodeBBUser = await User.exists(user.login);
+            let nodeBBUser = await User.getUidByUserslug(user.login);
             if (!nodeBBUser) {
                 nodeBBUser = await User.create({
                     username: user.login,
                 });
             }
-            console.log(`NodeBB User ${nodeBBUser}`);
             next(
                 null,
                 {
-                    uid: nodeBBUser.uid,
+                    uid: nodeBBUser,
                 },
                 '[[success:authentication-successful]]'
             );
