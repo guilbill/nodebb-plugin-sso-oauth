@@ -25,7 +25,7 @@ plugin.continueLogin = (req, username, password, next) => {
         method: 'POST',
     })
         .then((user) => {
-            console.dir(user);
+            console.log(JSON.stringify(user));
             user.json();
         })
         .then(async (user) => {
