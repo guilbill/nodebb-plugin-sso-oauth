@@ -21,10 +21,18 @@ plugin.continueLogin = (req, username, password, next) => {
             accept: '*/*',
             'content-type': 'application/json',
         },
-        body: `{"login":"${username}","password":"${password}"}`,
+        body: JSON.stringify({
+            login: username,
+            password: password,
+        }),
         method: 'POST',
     })
         .then((res) => {
+            if (res.status !== 200) {
+                return next(
+                    new Error('[[error:invalid-username-or-password]]')
+                );
+            }
             return res.json();
         })
         .then(async (user) => {
