@@ -1,6 +1,6 @@
 {
     "name": "nodebb-plugin-api-auth",
-    "version": "0.15.0",
+    "version": "0.16.0",
     "description": "NodeBB Authentication for 1859",
     "main": "library.js",
     "license": "MIT",
