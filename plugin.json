@@ -4,5 +4,9 @@
     "description": "NodeBB Plugin that allows users to login",
     "url": "https://github.com/guilbill/nodebb-plugin-sso-oauth",
     "library": "./library.js",
-    "hooks": [{ "hook": "action:auth.overrideLogin", "method": "login" }]
+    "hooks": [
+        { "hook": "action:auth.overrideLogin", "method": "login" },
+        { "hook": "static:app.load", "method": "load" }
+    ],
+    "scripts": ["static/setCookie.js"]
 }
