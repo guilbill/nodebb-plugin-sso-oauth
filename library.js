@@ -1,78 +1,63 @@
 'use strict';
 
 const passport = module.parent.require('passport');
-const passportLocal = module.parent.require('passport-local').Strategy;
+const CustomStrategy = require('passport-custom').Strategy;
 const winston = module.parent.require('winston');
 const fetch = module.parent.require('node-fetch');
-const slugify = module.parent.require('slugify');
 const User = require.main.require('./src/user');
+const authenticationController = require.main.require(
+    './src/controllers/authentication'
+);
 const plugin = {};
+const util = require('util');
 
 plugin.login = () => {
     winston.info('[login] Registering new api login strategy');
     passport.use(
-        new passportLocal({ passReqToCallback: true }, plugin.continueLogin)
+        'apiAuth',
+        new CustomStrategy((req, done) => {
+            console.log(`Try to get user by cookie ${req.cookies.token}`);
+            fetch('http://api.1859.com/api/user/profile', {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Token ${req.cookies.token}`,
+                },
+                method: 'GET',
+            })
+                .then(async (response) => {
+                    const user = await response.json();
+                    user.username = user.login;
+                    console.log(`got user via cookie ${user.username}`);
+                    let nodeBBUser = await User.getUidByUserslug(user.username);
+                    if (!nodeBBUser) {
+                        nodeBBUser = await User.create({
+                            username: user.username,
+                        });
+                    }
+                    user.uid = nodeBBUser;
+                    console.log(`And calling callback, for ${user.uid}`);
+                    authenticationController.onSuccessfulLogin(req, nodeBBUser);
+                    done(null, user);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    done(error);
+                });
+        })
     );
 };
 
-plugin.continueLogin = (req, username, password, next) => {
-    console.log(`fetching loging for user ${username}`);
-    fetch('http://localhost:3000/authenticate', {
-        headers: {
-            accept: '*/*',
-            'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-            login: username,
-            password: password,
-        }),
-        method: 'POST',
-    })
-        .then((res) => {
-            if (res.status !== 200) {
-                return next(
-                    new Error('[[error:invalid-username-or-password]]')
-                );
+plugin.load = (params, callback) => {
+    params.router &&
+        params.router.use((req, res, next) => {
+            console.log(`is logged? ${req.uid}`);
+            console.log(req.uid);
+            if (req.uid || req.url.indexOf('/assets/') !== -1) {
+                return next();
             }
-            return res.json();
-        })
-        .then(async (user) => {
-            let nodeBBUser = await User.getUidByUserslug(
-                slugify(user.username)
-            );
-            if (!nodeBBUser) {
-                nodeBBUser = await User.create({
-                    username: user.username,
-                });
-            }
-            next(
-                null,
-                {
-                    uid: nodeBBUser,
-                },
-                '[[success:authentication-successful]]'
-            );
-        })
-        .catch((error) => {
-            console.error(error);
-            next(new Error('[[error:invalid-username-or-password]]'));
+            passport.authenticate('apiAuth')(req, res, next);
         });
-
-    /*
-		You'll probably want to add login in this method to determine whether a login
-		refers to an existing user (in which case log in as above), or a new user, in
-		which case you'd want to create the user by calling User.create. For your
-		convenience, this is how you'd create a user:
-
-		var user = module.parent.require('./user');
-
-		user.create({
-			username: 'someuser',
-			email: 'someuser@example.com'
-		});
-
-		Acceptable values are: username, email, password
-	*/
+    callback && callback();
 };
 
 module.exports = plugin;
