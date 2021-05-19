@@ -16,8 +16,11 @@ plugin.login = () => {
     passport.use(
         'apiAuth',
         new CustomStrategy((req, done) => {
-            console.log(`Try to get user by cookie ${req.cookies.token}`);
-            fetch('http://api.1859.com/api/user/profile', {
+            console.dir(req.cookies);
+            if (!req.cookies.token) {
+                return done(new Error('cookie token missing'));
+            }
+            fetch('http://localhost:3000/api/user/profile', {
                 headers: {
                     accept: '*/*',
                     Authorization: `Token ${req.cookies.token}`,
@@ -27,7 +30,6 @@ plugin.login = () => {
                 .then(async (response) => {
                     const user = await response.json();
                     user.username = user.login;
-                    console.log(`got user via cookie ${user.username}`);
                     let nodeBBUser = await User.getUidByUserslug(user.username);
                     if (!nodeBBUser) {
                         nodeBBUser = await User.create({
@@ -35,7 +37,6 @@ plugin.login = () => {
                         });
                     }
                     user.uid = nodeBBUser;
-                    console.log(`And calling callback, for ${user.uid}`);
                     authenticationController.onSuccessfulLogin(req, nodeBBUser);
                     done(null, user);
                 })
@@ -46,12 +47,14 @@ plugin.login = () => {
         })
     );
 };
+plugin.filterConfigGet = (config, callback) => {
+    config.showNestedReplies = true;
+    callback(null, config);
+};
 
 plugin.load = (params, callback) => {
     params.router &&
         params.router.use((req, res, next) => {
-            console.log(`is logged? ${req.uid}`);
-            console.log(req.uid);
             if (req.uid || req.url.indexOf('/assets/') !== -1) {
                 return next();
             }
